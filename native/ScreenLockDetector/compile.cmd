@@ -1,0 +1,2 @@
+gcc.exe -mno-cygwin -I"c:/Program Files/Java/jdk1.6.0_03/include"  -I"c:/Program Files/Java/jdk1.6.0_03/include/win32" -Wl,--add-stdcall-alias -shared -o lockdetect.dll src/lockdetect.cpp
+copy lockdetect.dll ..\..
