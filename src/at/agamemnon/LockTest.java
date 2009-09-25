@@ -1,6 +1,7 @@
 /*
- * @(#)LockTest.java   08/11/05 
+ * @(#)LockTest.java   09/09/25
  * Alexander Kasimir
+ * Copyright (c) 2009 Alexander Kasimir
  */
 
 package at.agamemnon;
@@ -16,23 +17,28 @@ public class LockTest
       try
       {
          Thread.sleep(10000);
-         int screenstate=ScreenLockDetect.lockState();
-         
+         int screenstate = ScreenLockDetect.lockState();
+
          switch (screenstate)
          {
-            case ScreenLockDetect.SCREEN_LOCKED:
+            case ScreenLockDetect.SCREEN_LOCKED :
                System.out.println("Screen Locked");
+
                break;
-            case ScreenLockDetect.SCREEN_SAVER_ACTIVE:
+
+            case ScreenLockDetect.SCREEN_SAVER_ACTIVE :
                System.out.println("Screensaver running");
+
                break;
-            case ScreenLockDetect.SCREEN_UNLOCKED:
+
+            case ScreenLockDetect.SCREEN_UNLOCKED :
                System.out.println("Screen unlocked");
+
                break;
-            default:
+
+            default :
                System.out.println("Screen State unknown..");
-               
-         }         
+         }
       }
       catch (Exception e)
       {

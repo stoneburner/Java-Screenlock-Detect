@@ -1,44 +1,50 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * @(#)ScreenLockDetect.java   09/09/25
+ * Alexander Kasimir
+ * Copyright (c) 2009 Alexander Kasimir
  */
 
 package at.agamemnon;
 
+//~--- JDK imports ------------------------------------------------------------
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
+//~--- classes ----------------------------------------------------------------
 
 /**
  *
  * @author alexander.kasimir
  */
-public class ScreenLockDetect 
+public class ScreenLockDetect
 {
-   
-   public static final int SCREEN_LOCK_STATUS_UNKNOWN=-1;
-   public static final int SCREEN_UNLOCKED=0;
-   public static final int SCREEN_LOCKED=1;
-   public static final int SCREEN_SAVER_ACTIVE=2;
-   
-   
-   public static boolean isLocked()
+   public static final int SCREEN_LOCKED              = 1;
+   public static final int SCREEN_LOCK_STATUS_UNKNOWN = -1;
+   public static final int SCREEN_SAVER_ACTIVE        = 2;
+   public static final int SCREEN_UNLOCKED            = 0;
+
+   //~--- static initializers -------------------------------------------------
+
+   static
    {
-      if (lockState()==SCREEN_UNLOCKED)
-      {
-         return false;
-      }
-      else
-      {
-         return true;
-      }
+      System.loadLibrary("lockdetect");
    }
-   
+
+   //~--- constructors --------------------------------------------------------
+
+   public ScreenLockDetect()
+   {
+   }
+
+   //~--- methods -------------------------------------------------------------
+
    public static int lockState()
    {
       if (System.getProperty("os.name").startsWith("Windows"))
       {
          System.loadLibrary("lockdetect");
-         if (isScreenLocked()==true)
+         if (isScreenLocked() == true)
          {
             return SCREEN_LOCKED;
          }
@@ -71,6 +77,22 @@ public class ScreenLockDetect
       }
    }
 
+   //~--- get methods ---------------------------------------------------------
+
+   public static boolean isLocked()
+   {
+      if (lockState() == SCREEN_UNLOCKED)
+      {
+         return false;
+      }
+      else
+      {
+         return true;
+      }
+   }
+
+   private static native boolean isScreenLocked();
+
    private static boolean isScreenSaverRunningMac()
    {
       try
@@ -78,11 +100,11 @@ public class ScreenLockDetect
          String         line;
          Process        p     = Runtime.getRuntime().exec("ps -e");
          BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+         int            count = 0;
 
-         int count=0;
          while ((line = input.readLine()) != null)
-         {           
-            if (line.trim().endsWith("ScreenSaverEngine")==true)
+         {
+            if (line.trim().endsWith("ScreenSaverEngine") == true)
             {
                return true;
             }
@@ -92,25 +114,28 @@ public class ScreenLockDetect
       catch (Exception err)
       {
          err.printStackTrace();
-      }   
+      }
+
       return false;
    }
-   
+
    private static boolean isScreensaverRunningWindows()
    {
       try
       {
-         String         line;
-//         Process        p     = Runtime.getRuntime().exec("ps -e");
-         Process p = Runtime.getRuntime().exec(System.getenv("windir") +"\\system32\\"+"tasklist.exe");
-         BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+         String line;
 
-         int count=0;
+//       Process        p     = Runtime.getRuntime().exec("ps -e");
+         Process        p     = Runtime.getRuntime().exec(System.getenv("windir") + "\\system32\\" + "tasklist.exe");
+         BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+         int            count = 0;
+
          while ((line = input.readLine()) != null)
          {
-            if (count > 2 && line.length() > 25)
+            if ((count > 2) && (line.length() > 25))
             {
-               String process=line.substring(0,25).trim();
+               String process = line.substring(0, 25).trim();
+
                if (process.toLowerCase().endsWith(".scr"))
                {
                   return true;
@@ -123,16 +148,8 @@ public class ScreenLockDetect
       catch (Exception err)
       {
          err.printStackTrace();
-      }   
+      }
+
       return false;
    }
-   
-   private static native boolean isScreenLocked();
-   
-   static {System.loadLibrary("lockdetect");}   
-   
-   public ScreenLockDetect ()
-   {
-   }
-   
 }
